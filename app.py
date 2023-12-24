@@ -172,7 +172,7 @@ def update_charts(selected_entities):
                         'color': '#ffffff',
                         "backgroundColor": "#333333",
                         "marginTop": "5vh",
-                        "borderRadius": "10px"  # This adds rounded corners. Adjust as necessary.
+                        "borderRadius": "10px"
                     }
                 ),
                 width=12
@@ -198,8 +198,6 @@ def update_charts(selected_entities):
         rows.append(dbc.Row(cols))
 
     return rows
-
-
 
 
 if __name__ == '__main__':
