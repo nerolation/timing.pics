@@ -1,0 +1,25 @@
+@media screen and (min-width: 801px) {
+    .smallerfont {
+        font-size: 18px;
+    }
+}
+
+/* For screens narrower than or equal to 800px */
+@media screen and (max-width: 800px) {
+    .smallerfont {
+        font-size: 14px;
+    }
+}
+
+@media screen and (min-width: 801px) {
+    .evensmallerfont {
+        font-size: 16px;
+    }
+}
+
+/* For screens narrower than or equal to 800px */
+@media screen and (max-width: 800px) {
+    .evensmallerfont {
+        font-size: 12px;
+    }
+}

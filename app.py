@@ -2,6 +2,7 @@ import os
 import dash
 from dash import dcc
 from dash import html
+from dash import callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pickle
@@ -18,6 +19,25 @@ with open('last_updated.txt', 'r') as f:
 
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+def update_figure_layout(fig, width):
+    if width <= 800:
+        fig.update_layout(
+            font=dict(size=10),
+            margin=dict(l=0, r=0, t=20, b=20), 
+            xaxis_tickfont=dict(size=10),
+            yaxis_tickfont=dict(size=10), 
+            height=250
+        )
+    else:
+        fig.update_layout(
+            font=dict(size=16), 
+            margin={"t":70,"b":0,"r":50,"l":0},
+            xaxis_tickfont=dict(size=16),
+            yaxis_tickfont=dict(size=16),
+            height=400
+        )
+    return fig
 
 app.index_string = '''
 <!DOCTYPE html>
@@ -67,22 +87,22 @@ server = app.server
 
 app.layout = html.Div([
     dbc.Container([
-        dbc.Row(html.H1("Ethereum Timing Dashboard", style={'textAlign': 'center', 'marginTop': '20px', 'color': '#ffffff', 'fontFamily': 'Ubuntu Mono, monospace', 'fontWeight': 'bold'}), className="mb-4"),    
+        dbc.Row(html.H1("Ethereum Timing Dashboard", style={'textAlign': 'center', 'marginTop': '18px', 'color': '#ffffff', 'fontFamily': 'Ubuntu Mono, monospace', 'fontWeight': 'bold'}), className="mb-4"),    
         dbc.Row([
             dbc.Col(html.Div([
                html.H6([
                     "Built with 🤍 by ",
                     html.A("Toni Wahrstätter", href="https://twitter.com/nero_eth", target="_blank", 
                            style={'color': '#ffffff'})
-                ], style={'color': '#ffffff'}),
+                ],className='evensmallerfont', style={'color': '#ffffff'}),
                 
-                html.H5("What are timing games?", style={'marginTop': '20px', 'color': '#ffffff'}),
-                html.P("Timing games involve validators delaying their block proposals to increase their MEV rewards. This tactic gives builders extra time to enhance their blocks, leading to more MEV for the validator. As a result, those entities enganging in such games might be able to offer higher APYs, attracting more stakers and users. This site aims to keep you informed about the latest in timing games and how they're affecting the consensus layer.", style={'color': '#ffffff'}),
+                html.H5("What are timing games?", className='smallerfont', style={'marginTop': '20px', 'color': '#ffffff'}),
+                html.P("Timing games involve validators delaying their block proposals to increase their MEV rewards. This tactic gives builders extra time to enhance their blocks, leading to more MEV for the validator. As a result, those entities enganging in such games might be able to offer higher APYs, attracting more stakers and users. This site aims to keep you informed about the latest in timing games and how they're affecting the consensus layer.", className='smallerfont', style={'color': '#ffffff'}),
             ]), width=6),
             dbc.Col(html.Div([
-                html.H6(f"Last time updated: {last_updated}", style={'color': '#ffffff'}),
-                html.H5("Why does it matter?", style={'marginTop': '20px', 'color': '#ffffff'}),
-                html.P("Timing games present a challenge to decentralization and censorship resistance. They favor sophisticated entities like staking pools or centralized exchanges, who have the resources and size to experiment with risky strategies and ensure their late blocks remain on the canonical chain. These tactics aren't feasible for solo stakers, who can't afford the risk of missing a slot or engaging in such experimentation.", style={'color': '#ffffff'}),
+                html.H6(f"Last time updated: {last_updated}", className='evensmallerfont', style={'color': '#ffffff'}),
+                html.H5("Why does it matter?", style={'marginTop': '18px', 'color': '#ffffff'}, className='smallerfont'),
+                html.P("Timing games present a challenge to decentralization and censorship resistance. They favor sophisticated entities like staking pools or centralized exchanges, who have the resources and size to experiment with risky strategies and ensure their late blocks remain on the canonical chain. These tactics aren't feasible for solo stakers, who can't afford the risk of missing a slot or engaging in such experimentation.", style={'color': '#ffffff'}, className='smallerfont'),
             ]), width=6),
         ]),
         dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
@@ -91,11 +111,10 @@ app.layout = html.Div([
             id='entity-selector',
             options=[{'label': entity, 'value': entity} for entity in missed_slot_over_time_charts.keys()],
             value=['Coinbase'],  # Default value
-            switch=True,  # Use toggle switch style checkboxes
-            inline=True,  # Align checkboxes horizontally
-            className='my-2',  # Add margin
+            switch=True,
+            inline=True,
+            className='my-2 smallerfont',
             style={
-                'fontSize': '16px',  # Larger font size for readability
                 'color': 'white',  # Text color
             }
         ),
@@ -143,9 +162,22 @@ app.layout = html.Div([
 
 @app.callback(
     Output('charts-container', 'children'),
-    [Input('entity-selector', 'value')]
+    [Input('window-size-store', 'data'),
+     Input('entity-selector', 'value')]
 )
-def update_charts(selected_entities):
+def update_charts(window_size_data, selected_entities):
+    if window_size_data is None:
+        raise dash.exceptions.PreventUpdate
+
+    # Determine the triggering input
+    ctx = callback_context
+    if not ctx.triggered:
+        trigger_id = 'No input yet'
+    else:
+        trigger_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    width = window_size_data['width']
+    max_y_value_missed_slot = 0
     max_y_value_missed_slot = 0 
     
     for entity in selected_entities:
@@ -188,16 +220,19 @@ def update_charts(selected_entities):
         # Update the missed slot over time chart with the new y-axis range
         if missed_slot_fig:
             missed_slot_fig.update_layout(yaxis=dict(range=[0, max_y_value_missed_slot]))
+            missed_slot_fig = update_figure_layout(missed_slot_fig, width)
             cols.append(dbc.Col(dcc.Graph(figure=missed_slot_fig), width=6, md=6))
 
         # Add the time in slot scatter chart
         if time_in_slot_scatter_fig:
+            time_in_slot_scatter_fig = update_figure_layout(time_in_slot_scatter_fig, width)
             cols.append(dbc.Col(dcc.Graph(figure=time_in_slot_scatter_fig), width=6, md=6))
 
         # Add the current set of charts (and their header) to the rows
         rows.append(dbc.Row(cols))
 
     return rows
+
 
 
 if __name__ == '__main__':
