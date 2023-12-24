@@ -63,6 +63,7 @@ app.clientside_callback(
 )
 
 app.title = 'Timings.pics'
+server = app.server
 
 app.layout = html.Div([
     dbc.Container([
