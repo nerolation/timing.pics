@@ -18,7 +18,7 @@ with open('last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
 
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
 
 def update_figure_layout(fig, width):
     if width <= 800:
@@ -195,11 +195,21 @@ def update_charts(window_size_data, selected_entities):
     # Process the entities in reverse order so the latest selection is at the top
     for entity in reversed(selected_entities):
         cols = []
-
+        entity_name = entity.split(' <')[0]
+        info_symbol = html.Span(
+            className="fas fa-info-circle", 
+            id=f"tooltip-target-{entity_name}",
+            style={
+                'textAlign': 'center',
+                'marginLeft': '10px',
+                'cursor': 'pointer'
+            }
+        )
         # Create a header for the entity and append it to the rows list
+        print(entity_name)
         entity_header = dbc.Row(
             dbc.Col(
-                html.H4(f"{entity.split('<')[0]}", style={
+                html.H4([entity_name, info_symbol if entity_name == "Solo Stakers" else None], style={
                         'textAlign': 'center',
                         'paddingTop': '1vh',
                         'paddingBottom': '1vh',
@@ -215,6 +225,14 @@ def update_charts(window_size_data, selected_entities):
             className='mb-2'
         )
         rows.append(entity_header)
+        if entity_name == "Solo Stakers":
+            tooltip = dbc.Tooltip(
+                "Solo Stakers are identified through various heuristics applied in a highly conservative manner. Consequently, the displayed number of Solo Stakers may represent a lower bound, potentially underestimating the actual count.",
+                target=f"tooltip-target-{entity_name}",
+                placement="top",
+            )
+            rows.append(tooltip)  # Append tooltip to the rows
+
         
         # Retrieve the corresponding figures for the entity
         time_in_slot_scatter_fig = time_in_slot_scatter_charts.get(entity)
