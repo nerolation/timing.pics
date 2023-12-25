@@ -48,17 +48,17 @@ app.index_string = '''
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@nero_ETH">
         <meta name="twitter:title" content="Ethereum Timing Dashboard">
-        <meta name="twitter:description" content="Selected comparative visualizations on timing games on Ethereum.">
-        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/censorship.pics/main/assets/censorship.jpg">
-        <meta property="og:title" content="Timings.pics" relay="" api="" dashboard="">
-        <meta property="og:site_name" content="timings.pics">
-        <meta property="og:url" content="timings.pics">
-        <meta property="og:description" content="Selected comparative visualizations on timings on Ethereum.">
+        <meta name="twitter:description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
+        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
+        <meta property="og:title" content="Timing.pics" relay="" api="" dashboard="">
+        <meta property="og:site_name" content="timing.pics">
+        <meta property="og:url" content="timing.pics">
+        <meta property="og:description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
         <meta property="og:type" content="website">
-        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timings.pics/main/assets/timings.jpg">
-        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/timings.pics/main/assets/timings.jpg">
-        <meta name="description" content="Selected comparative visualizations on reorged blocks on Ethereum.">
-        <meta name="keywords" content="Ethereum, Timings, Dashboard">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggameslogo.jpg">
+        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
+        <meta name="description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
+        <meta name="keywords" content="Ethereum, Timings, DotPics, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
         {%metas%}
         <title>{%title%}</title>
@@ -82,7 +82,7 @@ app.clientside_callback(
     Input('window-size-trigger', 'n_intervals')
 )
 
-app.title = 'Timings.pics'
+app.title = 'Timing.pics'
 server = app.server
 
 app.layout = html.Div([
@@ -109,7 +109,7 @@ app.layout = html.Div([
         dcc.Store(id='window-size-store', data={'width': 800}),
         dbc.Checklist(
             id='entity-selector',
-            options=[{'label': entity, 'value': entity} for entity in missed_slot_over_time_charts.keys()],
+            options=[{'label': entity.split("<")[0], 'value': entity} for entity in missed_slot_over_time_charts.keys()],
             value=['Coinbase'],  # Default value
             switch=True,
             inline=True,
@@ -196,7 +196,7 @@ def update_charts(window_size_data, selected_entities):
         # Create a header for the entity and append it to the rows list
         entity_header = dbc.Row(
             dbc.Col(
-                html.H4(f"{entity}", style={
+                html.H4(f"{entity.split('<')[0]}", style={
                         'textAlign': 'center',
                         'paddingTop': '1vh',
                         'paddingBottom': '1vh',
