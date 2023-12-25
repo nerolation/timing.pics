@@ -44,7 +44,7 @@ app.index_string = '''
 <html>
     <head>
         </script>
-        <link rel="shortcut icon" href="https://www.censorship.pics/assets/assets/favicon.ico?m=1703479187.0">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/favicon.png">
         <meta charset="UTF-8">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@nero_ETH">
