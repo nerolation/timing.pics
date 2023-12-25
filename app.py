@@ -49,14 +49,14 @@ app.index_string = '''
         <meta name="twitter:site" content="@nero_ETH">
         <meta name="twitter:title" content="Ethereum Timing Dashboard">
         <meta name="twitter:description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
-        <meta name="twitter:image" content="https://github.com/nerolation/timing.pics/blob/abc7ed49cc9098e1d77bd3c3cabc9024ed23d242/assets/timinggames_og_image.jpg">
+        <meta name="twitter:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
         <meta property="og:title" content="Timing.pics" relay="" api="" dashboard="">
         <meta property="og:site_name" content="timing.pics">
         <meta property="og:url" content="timing.pics">
         <meta property="og:description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
         <meta property="og:type" content="website">
-        <link rel="shortcut icon" href="https://github.com/nerolation/timing.pics/blob/abc7ed49cc9098e1d77bd3c3cabc9024ed23d242/assets/timinggameslogo.jpg">
-        <meta property="og:image" content="https://github.com/nerolation/timing.pics/blob/abc7ed49cc9098e1d77bd3c3cabc9024ed23d242/assets/timinggames_og_image.jpg">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggameslogo.jpg">
+        <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
         <meta name="description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
         <meta name="keywords" content="Ethereum, Timings, DotPics, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
