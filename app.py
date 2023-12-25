@@ -62,7 +62,6 @@ app.index_string = '''
         <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/favicon.png">
         {%metas%}
         <title>{%title%}</title>
-        {%favicon%}
         {%css%}
     </head>
     <body>
