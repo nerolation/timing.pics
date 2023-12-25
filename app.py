@@ -44,7 +44,6 @@ app.index_string = '''
 <html>
     <head>
         </script>
-        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/favicon.png">
         <meta charset="UTF-8">
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:site" content="@nero_ETH">
@@ -56,11 +55,11 @@ app.index_string = '''
         <meta property="og:url" content="timing.pics">
         <meta property="og:description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
         <meta property="og:type" content="website">
-        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggameslogo.jpg">
         <meta property="og:image" content="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/timinggames_og_image.jpg">
         <meta name="description" content="Selected comparative visualizations on block proposal timings and missed slots on Ethereum.">
         <meta name="keywords" content="Ethereum, Timings, DotPics, Dashboard">
         <meta name="author" content="Toni Wahrstätter">
+        <link rel="shortcut icon" href="https://raw.githubusercontent.com/nerolation/timing.pics/main/assets/favicon.png">
         {%metas%}
         <title>{%title%}</title>
         {%favicon%}
@@ -119,7 +118,11 @@ app.layout = html.Div([
                 'color': 'white',  # Text color
             }
         ),
-        html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'}),
+        dcc.Loading(
+            id="loading-1",
+            type="default",  # You can change the spinner type here (options: 'graph', 'cube', 'circle', 'dot', and 'default')
+            children=html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'})
+        ),
         html.Div([
             dbc.Row(
                 dbc.Col(html.Div([
