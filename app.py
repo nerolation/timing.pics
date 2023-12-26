@@ -6,19 +6,32 @@ from dash import callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pickle
+from flask_caching import Cache
 
-# Load the pre-generated charts
-with open('missed_slot_over_time_chart.pkl', 'rb') as f:
-    missed_slot_over_time_charts = pickle.load(f)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'simple'  # Use 'filesystem' or 'redis' for persistent caching
+})
+
+@cache.memoize(timeout=86400)  # Cache for one day (86400 seconds)
+def load_data():
+    with open('missed_slot_over_time_chart.pkl', 'rb') as f:
+        missed_slot_over_time_charts = pickle.load(f)
     
-with open('time_in_slot_scatter_chart.pkl', 'rb') as f:
-    time_in_slot_scatter_charts = pickle.load(f)
+    with open('time_in_slot_scatter_chart.pkl', 'rb') as f:
+        time_in_slot_scatter_charts = pickle.load(f)
+    
+    return missed_slot_over_time_charts, time_in_slot_scatter_charts
+
+missed_slot_over_time_charts, time_in_slot_scatter_charts = load_data()
+
     
 with open('last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
 
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
+
 
 def update_figure_layout(fig, width):
     if width <= 800:
@@ -176,6 +189,7 @@ app.layout = html.Div([
     [Input('window-size-store', 'data'),
      Input('entity-selector', 'value')]
 )
+@cache.memoize(timeout=86400)
 def update_charts(window_size_data, selected_entities):
     if window_size_data is None:
         raise dash.exceptions.PreventUpdate
