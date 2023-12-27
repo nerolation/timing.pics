@@ -36,10 +36,10 @@ with open('last_updated.txt', 'r') as f:
 def update_figure_layout(fig, width):
     if width <= 800:
         fig.update_layout(
-            font=dict(size=10),
-            margin=dict(l=0, r=0, t=20, b=20), 
-            xaxis_tickfont=dict(size=10),
-            yaxis_tickfont=dict(size=10), 
+            font=dict(size=9),
+            margin=dict(l=0, r=10, t=20, b=20), 
+            xaxis_tickfont=dict(size=9),
+            yaxis_tickfont=dict(size=9), 
             height=250
         )
     else:
