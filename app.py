@@ -33,7 +33,7 @@ with open('last_updated.txt', 'r') as f:
 
 
 
-def update_figure_layout(fig, width):
+def update_figure_layout(fig, width, marker=False):
     if width <= 800:
         fig.update_layout(
             font=dict(size=8),
@@ -42,10 +42,11 @@ def update_figure_layout(fig, width):
             yaxis_tickfont=dict(size=9), 
             height=250
         )
-        for trace in fig.data:
-            if 'marker' in trace:
-                if "size" in trace['marker']:
-                    trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
+        if marker:
+            for trace in fig.data:
+                if 'marker' in trace:
+                    if "size" in trace['marker']:
+                        trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
 
     else:
         fig.update_layout(
@@ -236,6 +237,7 @@ def update_charts(window_size_data, selected_entities):
     rows = []
 
     # Process the entities in reverse order so the latest selection is at the top
+    last_added_marker_shrink = True
     for entity in reversed(selected_entities):
         cols = []
         entity_name = entity.split(' <')[0]
@@ -289,11 +291,12 @@ def update_charts(window_size_data, selected_entities):
 
         # Add the time in slot scatter chart
         if time_in_slot_scatter_fig:
-            time_in_slot_scatter_fig = update_figure_layout(time_in_slot_scatter_fig, width)
+            time_in_slot_scatter_fig = update_figure_layout(time_in_slot_scatter_fig, width, marker=last_added_marker_shrink)
             cols.append(dbc.Col(dcc.Graph(figure=time_in_slot_scatter_fig), width=6, md=6))
 
         # Add the current set of charts (and their header) to the rows
         rows.append(dbc.Row(cols))
+        last_added_marker_shrink = False
 
     return rows
 
