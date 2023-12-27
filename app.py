@@ -36,13 +36,17 @@ with open('last_updated.txt', 'r') as f:
 def update_figure_layout(fig, width):
     if width <= 800:
         fig.update_layout(
-            font=dict(size=9),
+            font=dict(size=8),
             margin=dict(l=0, r=30, t=20, b=20), 
             xaxis_tickfont=dict(size=9),
             yaxis_tickfont=dict(size=9), 
             height=250
         )
-        fig.data[0].marker.size=fig.data[0].marker.size*0.6
+        for trace in fig.data:
+            if 'marker' in trace:
+                if "size" in trace['marker']:
+                    trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
+
     else:
         fig.update_layout(
             font=dict(size=16), 
@@ -51,6 +55,10 @@ def update_figure_layout(fig, width):
             yaxis_tickfont=dict(size=16),
             height=400
         )
+        for trace in fig.data:
+            if 'marker' in trace:
+                if "size" in trace['marker']:
+                    trace['marker']['size'] = trace['marker']['size']
     return fig
 
 app.index_string = '''
