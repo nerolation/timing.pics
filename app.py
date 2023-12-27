@@ -161,8 +161,20 @@ app.layout = html.Div([
                             " by Caspar et al."
                         ]),
                         html.Li([
+                            html.A("The cost of artificial latency in the PBS context", href="https://ethresear.ch/t/the-cost-of-artificial-latency-in-the-pbs-context/17847s", target="_blank", style={'color': '#4E9CAF'}),
+                            " by Chorus One"
+                        ]),
+                        html.Li([
+                            html.A("Empirical analysis of the impact of block delays on the consensus layer", href="https://ethresear.ch/t/empirical-analysis-of-the-impact-of-block-delays-on-the-consensus-layer/17888", target="_blank", style={'color': '#4E9CAF'}),
+                            " by Kiln"
+                        ]),
+                        html.Li([
                             html.A("Time, slots, and the ordering of events in Ethereum Proof-of-Stake", href="https://www.paradigm.xyz/2023/04/mev-boost-ethereum-consensus", target="_blank", style={'color': '#4E9CAF'}),
                             " by Georgios and Mike"
+                        ]),
+                        html.Li([
+                            html.A("P2P Presentation on Timing Games (Youtube)", href="https://youtu.be/J_N13erDWKw?t=1061", target="_blank", style={'color': '#4E9CAF'}),
+                            " by P2P"
                         ]),
                         html.Li([
                             html.A("Time is Money (Youtube)", href="https://www.youtube.com/watch?v=gsFU-inKRQ8", target="_blank", style={'color': '#4E9CAF'}),
