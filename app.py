@@ -37,11 +37,12 @@ def update_figure_layout(fig, width):
     if width <= 800:
         fig.update_layout(
             font=dict(size=9),
-            margin=dict(l=0, r=10, t=20, b=20), 
+            margin=dict(l=0, r=30, t=20, b=20), 
             xaxis_tickfont=dict(size=9),
             yaxis_tickfont=dict(size=9), 
             height=250
         )
+        fig.data[0].marker.size=fig.data[0].marker.size*0.6
     else:
         fig.update_layout(
             font=dict(size=16), 
