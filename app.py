@@ -251,8 +251,6 @@ def update_charts(window_size_data, selected_entities):
                 'cursor': 'pointer'
             }
         )
-        # Create a header for the entity and append it to the rows list
-        print(entity_name)
         entity_header = dbc.Row(
             dbc.Col(
                 html.H4([entity_name, info_symbol if entity_name == "Solo Stakers" else None], style={
@@ -277,7 +275,7 @@ def update_charts(window_size_data, selected_entities):
                 target=f"tooltip-target-{entity_name}",
                 placement="top",
             )
-            rows.append(tooltip)  # Append tooltip to the rows
+            rows.append(tooltip)  
 
         
         # Retrieve the corresponding figures for the entity
