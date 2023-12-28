@@ -43,12 +43,7 @@ def update_figure_layout(fig, width, marker=False):
             yaxis_tickfont=dict(size=9), 
             height=250
         )
-        if marker:
-            for trace in fig.data:
-                if 'marker' in trace:
-                    if "size" in trace['marker']:
-                        trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
-
+        
     else:
         fig.update_layout(
             font=dict(size=16), 
@@ -57,11 +52,12 @@ def update_figure_layout(fig, width, marker=False):
             yaxis_tickfont=dict(size=16),
             height=400
         )
-        if marker:
-            for trace in fig.data:
-                if 'marker' in trace:
-                    if "size" in trace['marker']:
-                        trace['marker']['size'] = trace['marker']['size']
+    if marker:
+        for trace in fig.data:
+            if 'marker' in trace:
+                if "size" in trace['marker']:
+                    trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
+
     return fig
 
 app.index_string = '''
