@@ -56,10 +56,11 @@ def update_figure_layout(fig, width, marker=False):
             yaxis_tickfont=dict(size=16),
             height=400
         )
-        for trace in fig.data:
-            if 'marker' in trace:
-                if "size" in trace['marker']:
-                    trace['marker']['size'] = trace['marker']['size']
+        if marker:
+            for trace in fig.data:
+                if 'marker' in trace:
+                    if "size" in trace['marker']:
+                        trace['marker']['size'] = trace['marker']['size']
     return fig
 
 app.index_string = '''
