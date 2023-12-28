@@ -7,6 +7,7 @@ import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pickle
 from flask_caching import Cache
+import pandas as pd
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
 
@@ -232,6 +233,7 @@ def update_charts(window_size_data, selected_entities):
         missed_slot_fig = missed_slot_over_time_charts.get(entity)
         if missed_slot_fig:
             all_y_values = [y for trace in missed_slot_fig.data for y in trace.y]
+            all_y_values = [0 if pd.isna(x) else x for x in all_y_values]
             current_max_y = max(all_y_values, default=0)
             max_y_value_missed_slot = max(max_y_value_missed_slot, current_max_y)
 
