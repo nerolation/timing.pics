@@ -6,35 +6,58 @@ from dash import callback_context
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import pickle
-from flask_caching import Cache
+#from flask_caching import Cache
 import pandas as pd
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
 
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'simple'  # Use 'filesystem' or 'redis' for persistent caching
-})
+#cache = Cache(app.server, config={
+#    'CACHE_TYPE': 'simple'  # Use 'filesystem' or 'redis' for persistent caching
+#})
 
-@cache.memoize(timeout=86400)  # Cache for one day (86400 seconds)
+#@cache.memoize(timeout=86400)  # Cache for one day (86400 seconds)
 def load_data():
+    original_marker_sizes = {}
+    
     with open('missed_slot_over_time_chart.pkl', 'rb') as f:
         missed_slot_over_time_charts = pickle.load(f)
     
     with open('time_in_slot_scatter_chart.pkl', 'rb') as f:
         time_in_slot_scatter_charts = pickle.load(f)
-    
-    return missed_slot_over_time_charts, time_in_slot_scatter_charts
+        
+    for entity, fig in time_in_slot_scatter_charts.items():
+        # Initialize the list for this entity
+        print(entity)
+        print(len(fig.data))
+        for trace in fig.data:
+            # Check if this is a scatter trace with a marker size attribute
+            if 'marker' in trace and 'size' in trace.marker:
+                print("--------------------")
+                print(trace.marker)
+                original_marker_sizes[entity] = trace.marker.size
+            else:
+                pass
+            # If not, append None or some other placeholder to maintain index alignment
+                #original_marker_sizes[entity].append(None)
 
-missed_slot_over_time_charts, time_in_slot_scatter_charts = load_data()
+    
+    return missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes
+
+missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes = load_data()
+
+reduced_size_markers = {}
+for i, j in original_marker_sizes.items():
+    reduced_size_markers[i] = j*0.6
 
     
 with open('last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
 
+print(original_marker_sizes)
+print("original_marker_sizes")
 
 
-
-def update_figure_layout(fig, width, marker=False):
+def update_figure_layout(fig, width, entity, marker=False):
     if width <= 800:
         fig.update_layout(
             font=dict(size=8),
@@ -56,7 +79,7 @@ def update_figure_layout(fig, width, marker=False):
         for trace in fig.data:
             if 'marker' in trace:
                 if "size" in trace['marker']:
-                    trace['marker']['size'] = [size * 0.6 for size in trace['marker']['size']] if width <= 800 else trace['marker']['size']
+                    trace['marker']['size'] = reduced_size_markers[entity] if width <= 800 else original_marker_sizes[entity]
 
     return fig
 
@@ -209,7 +232,6 @@ app.layout = html.Div([
     [Input('window-size-store', 'data'),
      Input('entity-selector', 'value')]
 )
-@cache.memoize(timeout=86400)
 def update_charts(window_size_data, selected_entities):
     if window_size_data is None:
         raise dash.exceptions.PreventUpdate
@@ -282,12 +304,12 @@ def update_charts(window_size_data, selected_entities):
         # Update the missed slot over time chart with the new y-axis range
         if missed_slot_fig:
             missed_slot_fig.update_layout(yaxis=dict(range=[0, max_y_value_missed_slot]))
-            missed_slot_fig = update_figure_layout(missed_slot_fig, width)
+            missed_slot_fig = update_figure_layout(missed_slot_fig, width, entity)
             cols.append(dbc.Col(dcc.Graph(figure=missed_slot_fig), width=6, md=6))
 
         # Add the time in slot scatter chart
         if time_in_slot_scatter_fig:
-            time_in_slot_scatter_fig = update_figure_layout(time_in_slot_scatter_fig, width, marker=last_added_marker_shrink)
+            time_in_slot_scatter_fig = update_figure_layout(time_in_slot_scatter_fig, width, entity, marker=last_added_marker_shrink)
             cols.append(dbc.Col(dcc.Graph(figure=time_in_slot_scatter_fig), width=6, md=6))
 
         # Add the current set of charts (and their header) to the rows
