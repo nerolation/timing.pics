@@ -275,7 +275,6 @@ def update_charts(window_size_data, selected_entities):
             )
             rows.append(tooltip)  
 
-        
         # Retrieve the corresponding figures for the entity
         time_in_slot_scatter_fig = time_in_slot_scatter_charts.get(entity)
         missed_slot_fig = missed_slot_over_time_charts.get(entity)
