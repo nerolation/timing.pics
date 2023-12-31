@@ -64,7 +64,7 @@ def update_figure_layout(fig, width, entity, marker=False):
             margin=dict(l=0, r=30, t=20, b=20), 
             xaxis_tickfont=dict(size=9),
             yaxis_tickfont=dict(size=9), 
-            height=250
+            height=230
         )
         
     else:
@@ -73,7 +73,7 @@ def update_figure_layout(fig, width, entity, marker=False):
             margin={"t":70,"b":0,"r":50,"l":0},
             xaxis_tickfont=dict(size=16),
             yaxis_tickfont=dict(size=16),
-            height=400
+            height=250
         )
     if marker:
         for trace in fig.data:
