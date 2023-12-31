@@ -27,13 +27,9 @@ def load_data():
         
     for entity, fig in time_in_slot_scatter_charts.items():
         # Initialize the list for this entity
-        print(entity)
-        print(len(fig.data))
         for trace in fig.data:
             # Check if this is a scatter trace with a marker size attribute
             if 'marker' in trace and 'size' in trace.marker:
-                print("--------------------")
-                print(trace.marker)
                 original_marker_sizes[entity] = trace.marker.size
             else:
                 pass
@@ -52,9 +48,6 @@ for i, j in original_marker_sizes.items():
     
 with open('last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
-
-print(original_marker_sizes)
-print("original_marker_sizes")
 
 
 MAX_SELECTIONS = 5  # Limit to 5 entities
