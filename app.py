@@ -4,7 +4,7 @@ from dash import dcc
 from dash import html
 from dash import callback_context
 import dash_bootstrap_components as dbc
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import pickle
 #from flask_caching import Cache
 import pandas as pd
@@ -57,6 +57,12 @@ print(original_marker_sizes)
 print("original_marker_sizes")
 
 
+MAX_SELECTIONS = 5  # Limit to 5 entities
+
+KNOWN_CEX=[i for i in missed_slot_over_time_charts.keys()  if i in ['Coinbase', 'Kraken', 'Binance', 'Bitpanda', 'Bitstamp', 'Bitcoin suisse', "Upbit", "Coinspot"]][0:MAX_SELECTIONS]
+KNOWN_LST=[i for i in missed_slot_over_time_charts.keys() if i in ['Lido', 'Rocketpool', 'Staked.us', "Figment", "Kiln", "Okx","P2p.org", "Stakefish", "Frax finance"]][0:MAX_SELECTIONS]
+
+
 def update_figure_layout(fig, width, entity, marker=False):
     if width <= 800:
         fig.update_layout(
@@ -64,7 +70,7 @@ def update_figure_layout(fig, width, entity, marker=False):
             margin=dict(l=0, r=30, t=20, b=20), 
             xaxis_tickfont=dict(size=9),
             yaxis_tickfont=dict(size=9), 
-            height=250
+            height=230
         )
         
     else:
@@ -73,7 +79,7 @@ def update_figure_layout(fig, width, entity, marker=False):
             margin={"t":70,"b":0,"r":50,"l":0},
             xaxis_tickfont=dict(size=16),
             yaxis_tickfont=dict(size=16),
-            height=400
+            height=250
         )
     if marker:
         for trace in fig.data:
@@ -158,9 +164,14 @@ app.layout = html.Div([
         ]),
         dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
         dcc.Store(id='window-size-store', data={'width': 800}),
+        dcc.Store(id='selected_order', storage_type='session'),
         dbc.Checklist(
             id='entity-selector',
-            options=[{'label': entity.split("<")[0], 'value': entity} for entity in missed_slot_over_time_charts.keys()],
+            options=[
+                {'label': 'All CEX', 'value': 'All CEX'},
+                {'label': 'All LSTs', 'value': 'All LSTs'}                
+            ] +
+            [{'label': entity.split("<")[0], 'value': entity} for entity in missed_slot_over_time_charts.keys()],
             value=['Coinbase'],  # Default value
             switch=True,
             inline=True,
@@ -247,6 +258,19 @@ def update_charts(window_size_data, selected_entities):
     max_y_value_missed_slot = 0
     max_y_value_missed_slot = 0 
     
+    
+    if 'All CEX' in selected_entities:
+        for i in reversed(KNOWN_LST):
+            if i in selected_entities:
+                selected_entities.remove(i)
+        selected_entities.extend(KNOWN_CEX)  # Replace with actual values if different
+
+    if 'All LSTs' in selected_entities:
+        for i in reversed(KNOWN_CEX):
+            if i in selected_entities:
+                selected_entities.remove(i)
+        selected_entities.extend(KNOWN_LST) 
+    
     for entity in selected_entities:
         missed_slot_fig = missed_slot_over_time_charts.get(entity)
         if missed_slot_fig:
@@ -319,7 +343,55 @@ def update_charts(window_size_data, selected_entities):
     return rows
 
 
+@app.callback(
+    [Output('entity-selector', 'value'),
+     Output('selected_order', 'data')],  # Additional output for the order of selections
+    [Input('entity-selector', 'value')],
+    [State('selected_order', 'data')]  # Include the previous order of selections
+)
+def set_checklist_values(selected_entities, selected_order):
+    if not selected_entities:
+        raise PreventUpdate
 
+    all_selected_entities = selected_entities.copy()  # Copy the list to avoid modifying the input directly
+
+    # Handle 'All CEX' and 'All LSTs' special cases
+    if 'All CEX' in selected_entities:
+        all_selected_entities = [entity for entity in all_selected_entities if entity not in KNOWN_LST + ['All LSTs']]
+        for cex in reversed(KNOWN_CEX):
+            if cex not in all_selected_entities:
+                all_selected_entities.append(cex)
+
+    if 'All LSTs' in selected_entities:
+        all_selected_entities = [entity for entity in all_selected_entities if entity not in KNOWN_CEX + ['All CEX']]
+        for lst in reversed(KNOWN_LST):
+            if lst not in all_selected_entities:
+                all_selected_entities.append(lst)
+
+    all_selected_entities = [entity for entity in all_selected_entities if entity not in ['All CEX', 'All LSTs']]
+
+    # Initialize selected_order if it's None
+    if selected_order is None:
+        selected_order = []
+
+    # Update the order of selections
+    new_order = []
+    for entity in reversed(all_selected_entities):
+        if entity in selected_order:
+            selected_order.remove(entity)
+        new_order.append(entity)
+    new_order = new_order+selected_order
+
+    # Limit the number of selections
+    if len(new_order) > MAX_SELECTIONS:
+        deselected_count = len(new_order) - MAX_SELECTIONS
+        deselected = new_order[-deselected_count:]
+        all_selected_entities = [entity for entity in all_selected_entities if entity not in deselected]
+        new_order = new_order[:len(new_order) - deselected_count]
+        
+    
+
+    return all_selected_entities, new_order
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
