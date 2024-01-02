@@ -25,6 +25,22 @@ def load_data():
     with open('time_in_slot_scatter_chart.pkl', 'rb') as f:
         time_in_slot_scatter_charts = pickle.load(f)
         
+    with open('gamer_bars.pkl', 'rb') as f:
+        gamer_bars = pickle.load(f)
+    
+    with open('missed_slot_bars.pkl', 'rb') as f:
+        missed_slot_bars = pickle.load(f)
+        
+    with open('gamer_advantage_lines.pkl', 'rb') as f:
+        gamer_advantage_lines = pickle.load(f)
+    
+    with open('gamer_advantage_avg.pkl', 'rb') as f:
+        gamer_advantage_avg = pickle.load(f)
+        
+    with open('missed_market_share_chart.pkl', 'rb') as f:
+        missed_market_share_chart = pickle.load(f)
+        
+        
     for entity, fig in time_in_slot_scatter_charts.items():
         # Initialize the list for this entity
         for trace in fig.data:
@@ -37,9 +53,18 @@ def load_data():
                 #original_marker_sizes[entity].append(None)
 
     
-    return missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes
+    return (
+        missed_slot_over_time_charts, 
+        time_in_slot_scatter_charts, 
+        original_marker_sizes, 
+        gamer_bars, 
+        missed_slot_bars,
+        gamer_advantage_lines,
+        gamer_advantage_avg,
+        missed_market_share_chart
+    )
 
-missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes = load_data()
+missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes, gamer_bars, missed_slot_bars, gamer_advantage_lines, gamer_advantage_avg, missed_market_share_chart = load_data()
 
 reduced_size_markers = {}
 for i, j in original_marker_sizes.items():
@@ -50,7 +75,7 @@ with open('last_updated.txt', 'r') as f:
     last_updated = f.read().strip()
 
 
-MAX_SELECTIONS = 5  # Limit to 5 entities
+MAX_SELECTIONS = 4
 
 KNOWN_CEX=[i for i in missed_slot_over_time_charts.keys()  if i in ['Coinbase', 'Kraken', 'Binance', 'Bitpanda', 'Bitstamp', 'Bitcoin suisse', "Upbit", "Coinspot"]][0:MAX_SELECTIONS]
 KNOWN_LST=[i for i in missed_slot_over_time_charts.keys() if i in ['Lido', 'Rocketpool', 'Staked.us', "Figment", "Kiln", "Okx","P2p.org", "Stakefish", "Frax finance"]][0:MAX_SELECTIONS]
@@ -157,27 +182,66 @@ app.layout = html.Div([
         ]),
         dbc.Row(dcc.Interval(id='window-size-trigger', interval=1000, n_intervals=0, max_intervals=1)),
         dcc.Store(id='window-size-store', data={'width': 800}),
-        dcc.Store(id='selected_order', storage_type='session'),
-        dbc.Checklist(
-            id='entity-selector',
-            options=[
-                {'label': 'All CEX', 'value': 'All CEX'},
-                {'label': 'All LSTs', 'value': 'All LSTs'}                
-            ] +
-            [{'label': entity.split("<")[0], 'value': entity} for entity in missed_slot_over_time_charts.keys()],
-            value=['Coinbase'],  # Default value
-            switch=True,
-            inline=True,
-            className='my-2 smallerfont',
-            style={
-                'color': 'white',  # Text color
-            }
-        ),
-        dcc.Loading(
-            id="loading-1",
-            type="default",  # You can change the spinner type here (options: 'graph', 'cube', 'circle', 'dot', and 'default')
-            children=html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'})
-        ),
+        dbc.Tabs([
+            dbc.Tab(
+                label="General Info Charts", 
+                children=[
+                    dbc.Row([
+                        dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), width={"size": 8, "offset": 0}, lg=8, xl=8),
+                        dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), width={"size": 4, "offset": 0}, lg=4, xl=4),
+                    ], justify="center"),
+                    dbc.Row([
+                    
+                        dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), width={"size": 12, "offset": 0}, lg=12, xl=12),
+                    ], justify="center"),  
+                    dbc.Row([
+                        # The chart takes up the full width on extra small to small screens,
+                        # and an appropriate fraction of the width on larger screens
+                        dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), width={"size": 6, "offset": 0}, lg=5, xl=5),
+
+                        # Second chart does the same
+                        dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), width={"size": 6, "offset": 0}, lg=5, xl=5),
+                    ], justify="center"), 
+                       
+                     
+                ], 
+                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold"},
+                tab_class_name='custom-tab',
+                label_style={"color": "#ffffff"},
+                active_label_style={"color": "#000000"}
+            ),
+            dbc.Tab(
+                label="Per Validator", 
+                children=[
+                    dcc.Store(id='selected_order', storage_type='session'),
+                    dbc.Checklist(
+                        id='entity-selector',
+                        options=[
+                            {'label': 'Largest CEXs', 'value': 'All CEX'},
+                            {'label': 'Largest Pools', 'value': 'All LSTs'}
+                        ] + 
+                        [{'label': entity.split("<")[0], 'value': entity} for entity in missed_slot_over_time_charts.keys()],
+                        value=['Coinbase'],  # Default value
+                        switch=True,
+                        inline=True,
+                        className='my-2 smallerfont',
+                        style={
+                            'color': 'white',  # Text color
+                        }
+                    ),
+                    dcc.Loading(
+                        id="loading-1",
+                        type="default",  # You can change the spinner type here (options: 'graph', 'cube', 'circle', 'dot', and 'default')
+                        children=html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'})
+                    ),
+                ],
+                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold"},
+                tab_class_name='custom-tab',
+                label_style={"color": "#ffffff"},
+                active_label_style={"color": "#000000"}
+            )
+        ], style={'fontSize': '18px', 'fontFamily': 'Ubuntu Mono, monospace'}),
+
         html.Div([
             dbc.Row(
                 dbc.Col(html.Div([
