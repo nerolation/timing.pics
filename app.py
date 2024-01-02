@@ -81,14 +81,15 @@ KNOWN_CEX=[i for i in missed_slot_over_time_charts.keys()  if i in ['Coinbase', 
 KNOWN_LST=[i for i in missed_slot_over_time_charts.keys() if i in ['Lido', 'Rocketpool', 'Staked.us', "Figment", "Kiln", "Okx","P2p.org", "Stakefish", "Frax finance"]][0:MAX_SELECTIONS]
 
 
-def update_figure_layout(fig, width, entity, marker=False):
+def update_figure_layout(fig, width, entity, marker=False, height=230):
     if width <= 800:
         fig.update_layout(
             font=dict(size=8),
             margin=dict(l=0, r=30, t=20, b=20), 
             xaxis_tickfont=dict(size=9),
             yaxis_tickfont=dict(size=9), 
-            height=230
+            height=height,
+            legend=dict(font=dict(family="Ubuntu Mono", size=10, color="white"))
         )
         
     else:
@@ -97,7 +98,9 @@ def update_figure_layout(fig, width, entity, marker=False):
             margin={"t":70,"b":0,"r":50,"l":0},
             xaxis_tickfont=dict(size=16),
             yaxis_tickfont=dict(size=16),
-            height=250
+            height=height+20,
+            legend=dict(font=dict(family="Ubuntu Mono", size=14, color="white"))
+            
         )
     if marker:
         for trace in fig.data:
@@ -184,28 +187,27 @@ app.layout = html.Div([
         dcc.Store(id='window-size-store', data={'width': 800}),
         dbc.Tabs([
             dbc.Tab(
-                label="General Info Charts", 
+                label="General Info Charts",
                 children=[
-                    dbc.Row([
-                        dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), width={"size": 8, "offset": 0}, lg=8, xl=8),
-                        dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), width={"size": 4, "offset": 0}, lg=4, xl=4),
-                    ], justify="center"),
-                    dbc.Row([
-                    
-                        dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), width={"size": 12, "offset": 0}, lg=12, xl=12),
-                    ], justify="center"),  
-                    dbc.Row([
-                        # The chart takes up the full width on extra small to small screens,
-                        # and an appropriate fraction of the width on larger screens
-                        dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), width={"size": 6, "offset": 0}, lg=5, xl=5),
-
-                        # Second chart does the same
-                        dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), width={"size": 6, "offset": 0}, lg=5, xl=5),
-                    ], justify="center"), 
-                       
-                     
-                ], 
-                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold"},
+                    dcc.Loading(
+                        id="loading-2",
+                        type="default",
+                        children=[
+                            dbc.Row([  # First row of graphs
+                                dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), xs=12, md=8, className="mb-4"),  # Full width on extra-small screens
+                                dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), xs=12, md=4, className="mb-4"),
+                            ]),
+                            dbc.Row([  # Second row of graphs
+                                dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), xs=12, className="mb-4"),
+                            ]),
+                            dbc.Row([  # Third row of graphs
+                                dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), xs=12, md=6, className="mb-4"),
+                                dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), xs=12, md=6, className="mb-4"),
+                            ])
+                        ],
+                    ),
+                ],
+                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold", 'fontSize': '16px', 'fontFamily': 'Ubuntu Mono, monospace'},
                 tab_class_name='custom-tab',
                 label_style={"color": "#ffffff"},
                 active_label_style={"color": "#000000"}
@@ -235,7 +237,7 @@ app.layout = html.Div([
                         children=html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'})
                     ),
                 ],
-                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold"},
+                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold", 'fontSize': '16px', 'fontFamily': 'Ubuntu Mono, monospace'},
                 tab_class_name='custom-tab',
                 label_style={"color": "#ffffff"},
                 active_label_style={"color": "#000000"}
@@ -294,6 +296,29 @@ app.layout = html.Div([
     "minHeight": "100vh",
     'backgroundColor': '#0a0a0a',
 })
+
+@app.callback(
+    [Output('chart3', 'figure'),
+     Output('chart4', 'figure'),
+     Output('chart5', 'figure'),
+     Output('chart1', 'figure'),
+     Output('chart2', 'figure')],
+    [Input('window-size-store', 'data')]
+)
+def update_layouts(size_data):
+    # Extract the width from the stored data
+    width = size_data['width']
+
+    # Update each chart using your update_figure_layout function
+    updated_chart3 = update_figure_layout(gamer_advantage_lines, width, entity='chart3', height=350)
+    updated_chart4 = update_figure_layout(gamer_advantage_avg, width, entity='chart4', height=350)
+    updated_chart5 = update_figure_layout(missed_market_share_chart, width, entity='chart5', height=450)
+    updated_chart1 = update_figure_layout(gamer_bars, width, entity='chart1',height=550)
+    updated_chart2 = update_figure_layout(missed_slot_bars, width, entity='chart2',height=550)
+
+    # Return the updated chart layouts
+    return updated_chart3, updated_chart4, updated_chart5, updated_chart1, updated_chart2
+
 
 @app.callback(
     Output('charts-container', 'children'),

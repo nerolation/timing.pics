@@ -23,6 +23,11 @@
         font-size: 12px;
     }
 }
+@media screen and (max-width: 800px) {
+    .custom-tab {
+        font-size:10px !important;
+    }
+}
 
 .smallerfont .custom-control-label::after {
     content: attr(data-after);  /* This will be the part you want to style differently */
@@ -35,3 +40,20 @@
     /* Use a regular expression to remove the marker and everything after it */
     content: regex("^([^\|]*)");
 }
+
+#chart3 > div.js-plotly-plot > div > div > svg:nth-child(3) > g.menulayer > g > g.updatemenu-header-group > g:nth-child(1) > rect:hover {
+    fill: rgb(30, 30, 30) !important; /* Light gray color */
+}
+
+#chart3 > div.js-plotly-plot > div > div > svg:nth-child(3) > g.menulayer > g > g.updatemenu-header-group > g:nth-child(2) > rect:hover {
+    fill: rgb(30, 30, 30) !important; /* Light gray color */
+}
+
+.updatemenu-button:hover{
+    fill: rgb(30, 30, 30) !important;
+}
+
+.updatemenu-item-text:hover {
+    fill: rgb(30, 30, 30) !important; /* Light gray color */
+}
+    
