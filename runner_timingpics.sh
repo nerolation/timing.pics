@@ -1,7 +1,7 @@
 #!/bin/bash
 cd ~/ethereum/timing_games
-#./bin/python3 run_ethdata_pipeline.py
-#./bin/python3 build.py
+./bin/python3 run_ethdata_pipeline.py
+./bin/python3 build.py
 
 cd ./timing.pics
 cp ../last_updated.txt ./
