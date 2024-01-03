@@ -187,32 +187,6 @@ app.layout = html.Div([
         dcc.Store(id='window-size-store', data={'width': 800}),
         dbc.Tabs([
             dbc.Tab(
-                label="General Info Charts",
-                children=[
-                    dcc.Loading(
-                        id="loading-2",
-                        type="default",
-                        children=[
-                            dbc.Row([  # First row of graphs
-                                dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), xs=12, md=8, className="mb-4"),  # Full width on extra-small screens
-                                dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), xs=12, md=4, className="mb-4"),
-                            ]),
-                            dbc.Row([  # Second row of graphs
-                                dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), xs=12, className="mb-4"),
-                            ]),
-                            dbc.Row([  # Third row of graphs
-                                dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), xs=12, md=6, className="mb-4"),
-                                dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), xs=12, md=6, className="mb-4"),
-                            ])
-                        ],
-                    ),
-                ],
-                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold", 'fontSize': '16px', 'fontFamily': 'Ubuntu Mono, monospace'},
-                tab_class_name='custom-tab',
-                label_style={"color": "#ffffff"},
-                active_label_style={"color": "#000000"}
-            ),
-            dbc.Tab(
                 label="Per Validator", 
                 children=[
                     dcc.Store(id='selected_order', storage_type='session'),
@@ -235,6 +209,32 @@ app.layout = html.Div([
                         id="loading-1",
                         type="default",  # You can change the spinner type here (options: 'graph', 'cube', 'circle', 'dot', and 'default')
                         children=html.Div(id='charts-container', style={'backgroundColor': '#0a0a0a'})
+                    ),
+                ],
+                tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold", 'fontSize': '16px', 'fontFamily': 'Ubuntu Mono, monospace'},
+                tab_class_name='custom-tab',
+                label_style={"color": "#ffffff"},
+                active_label_style={"color": "#000000"}
+            ),
+            dbc.Tab(
+                label="General Info Charts",
+                children=[
+                    dcc.Loading(
+                        id="loading-2",
+                        type="default",
+                        children=[
+                            dbc.Row([  # First row of graphs
+                                dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), xs=12, md=8, className="mb-4"),  # Full width on extra-small screens
+                                dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), xs=12, md=4, className="mb-4"),
+                            ]),
+                            dbc.Row([  # Second row of graphs
+                                dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), xs=12, className="mb-4"),
+                            ]),
+                            dbc.Row([  # Third row of graphs
+                                dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), xs=12, md=6, className="mb-4"),
+                                dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), xs=12, md=6, className="mb-4"),
+                            ])
+                        ],
                     ),
                 ],
                 tab_style={"margin": "10px", "padding": "10px", "fontWeight": "bold", 'fontSize': '16px', 'fontFamily': 'Ubuntu Mono, monospace'},
