@@ -250,35 +250,35 @@ app.layout = html.Div([
                     html.H6("Additional resources:", style={'color': '#ffffff'}),
                     html.Ul([
                         html.Li([
-                            html.A("Timing Games: Implications and Possible Mitigations", href="https://ethresear.ch/t/timing-games-implications-and-possible-mitigations/17612", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Timing Games: Implications and Possible Mitigations", href="https://ethresear.ch/t/timing-games-implications-and-possible-mitigations/17612", target="_blank",className='custom-link'),
                             " by Caspar and Mike"
                         ]),
                         html.Li([
-                            html.A("Time to Bribe: Measuring Block Construction Market", href="https://arxiv.org/abs/2305.16468", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Time to Bribe: Measuring Block Construction Market", href="https://arxiv.org/abs/2305.16468", target="_blank",className='custom-link'),
                             " by Toni et al."
                         ]),
                         html.Li([
-                            html.A("Time is Money: Strategic Timing Games in Proof-of-Stake Protocols", href="https://arxiv.org/abs/2305.09032", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Time is Money: Strategic Timing Games in Proof-of-Stake Protocols", href="https://arxiv.org/abs/2305.09032", target="_blank",className='custom-link'),
                             " by Caspar et al."
                         ]),
                         html.Li([
-                            html.A("The cost of artificial latency in the PBS context", href="https://ethresear.ch/t/the-cost-of-artificial-latency-in-the-pbs-context/17847s", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("The cost of artificial latency in the PBS context", href="https://ethresear.ch/t/the-cost-of-artificial-latency-in-the-pbs-context/17847s", target="_blank", className='custom-link'),
                             " by Chorus One"
                         ]),
                         html.Li([
-                            html.A("Empirical analysis of the impact of block delays on the consensus layer", href="https://ethresear.ch/t/empirical-analysis-of-the-impact-of-block-delays-on-the-consensus-layer/17888", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Empirical analysis of the impact of block delays on the consensus layer", href="https://ethresear.ch/t/empirical-analysis-of-the-impact-of-block-delays-on-the-consensus-layer/17888",className='custom-link', target="_blank"),
                             " by Kiln"
                         ]),
                         html.Li([
-                            html.A("Time, slots, and the ordering of events in Ethereum Proof-of-Stake", href="https://www.paradigm.xyz/2023/04/mev-boost-ethereum-consensus", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Time, slots, and the ordering of events in Ethereum Proof-of-Stake", href="https://www.paradigm.xyz/2023/04/mev-boost-ethereum-consensus", target="_blank",className='custom-link'),
                             " by Georgios and Mike"
                         ]),
                         html.Li([
-                            html.A("P2P Presentation on Timing Games (Youtube)", href="https://youtu.be/J_N13erDWKw?t=1061", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("P2P Presentation on Timing Games (Youtube)", href="https://youtu.be/J_N13erDWKw?t=1061", target="_blank",className='custom-link'),
                             " by P2P"
                         ]),
                         html.Li([
-                            html.A("Time is Money (Youtube)", href="https://www.youtube.com/watch?v=gsFU-inKRQ8", target="_blank", style={'color': '#4E9CAF'}),
+                            html.A("Time is Money (Youtube)", href="https://www.youtube.com/watch?v=gsFU-inKRQ8", target="_blank",className='custom-link'),
                             " by Caspar"
                         ])
                     ], style={'paddingLeft': '20px', 'color': '#ffffff'})
