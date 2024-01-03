@@ -40,6 +40,9 @@ def load_data():
     with open('missed_market_share_chart.pkl', 'rb') as f:
         missed_market_share_chart = pickle.load(f)
         
+    with open('missed_reorged_chart.pkl', 'rb') as f:
+        missed_reorged_chart = pickle.load(f)
+        
         
     for entity, fig in time_in_slot_scatter_charts.items():
         # Initialize the list for this entity
@@ -61,10 +64,11 @@ def load_data():
         missed_slot_bars,
         gamer_advantage_lines,
         gamer_advantage_avg,
-        missed_market_share_chart
+        missed_market_share_chart,
+        missed_reorged_chart
     )
 
-missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes, gamer_bars, missed_slot_bars, gamer_advantage_lines, gamer_advantage_avg, missed_market_share_chart = load_data()
+missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes, gamer_bars, missed_slot_bars, gamer_advantage_lines, gamer_advantage_avg, missed_market_share_chart, missed_reorged_chart = load_data()
 
 reduced_size_markers = {}
 for i, j in original_marker_sizes.items():
@@ -223,14 +227,17 @@ app.layout = html.Div([
                         id="loading-2",
                         type="default",
                         children=[
-                            dbc.Row([  # First row of graphs
+                            dbc.Row([
                                 dbc.Col(dcc.Graph(id='chart3', figure=gamer_advantage_lines), xs=12, md=8, className="mb-4"),  # Full width on extra-small screens
                                 dbc.Col(dcc.Graph(id='chart4', figure=gamer_advantage_avg), xs=12, md=4, className="mb-4"),
                             ]),
-                            dbc.Row([  # Second row of graphs
+                            dbc.Row([
                                 dbc.Col(dcc.Graph(id='chart5', figure=missed_market_share_chart), xs=12, className="mb-4"),
                             ]),
-                            dbc.Row([  # Third row of graphs
+                            dbc.Row([ 
+                                dbc.Col(dcc.Graph(id='chart6', figure=missed_reorged_chart), xs=12, className="mb-4"),
+                            ]),
+                            dbc.Row([
                                 dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), xs=12, md=6, className="mb-4"),
                                 dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), xs=12, md=6, className="mb-4"),
                             ])
@@ -301,6 +308,7 @@ app.layout = html.Div([
     [Output('chart3', 'figure'),
      Output('chart4', 'figure'),
      Output('chart5', 'figure'),
+     Output('chart6', 'figure'),
      Output('chart1', 'figure'),
      Output('chart2', 'figure')],
     [Input('window-size-store', 'data')]
@@ -313,11 +321,12 @@ def update_layouts(size_data):
     updated_chart3 = update_figure_layout(gamer_advantage_lines, width, entity='chart3', height=350)
     updated_chart4 = update_figure_layout(gamer_advantage_avg, width, entity='chart4', height=350)
     updated_chart5 = update_figure_layout(missed_market_share_chart, width, entity='chart5', height=450)
+    updated_chart6 = update_figure_layout(missed_reorg_chart, width, entity='chart6', height=450)
     updated_chart1 = update_figure_layout(gamer_bars, width, entity='chart1',height=550)
     updated_chart2 = update_figure_layout(missed_slot_bars, width, entity='chart2',height=550)
 
     # Return the updated chart layouts
-    return updated_chart3, updated_chart4, updated_chart5, updated_chart1, updated_chart2
+    return updated_chart3, updated_chart4, updated_chart5, updated_chart6, updated_chart1, updated_chart2
 
 
 @app.callback(
