@@ -9,7 +9,7 @@ import pickle
 #from flask_caching import Cache
 import pandas as pd
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, 'https://use.fontawesome.com/releases/v5.8.1/css/all.css'])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 #cache = Cache(app.server, config={
 #    'CACHE_TYPE': 'simple'  # Use 'filesystem' or 'redis' for persistent caching
@@ -42,7 +42,9 @@ def load_data():
         
     with open('missed_reorged_chart.pkl', 'rb') as f:
         missed_reorged_chart = pickle.load(f)
-        
+    
+    with open('missed_mevboost_chart.pkl', 'rb') as f:
+        missed_mevboost_chart = pickle.load(f)
         
     for entity, fig in time_in_slot_scatter_charts.items():
         # Initialize the list for this entity
@@ -65,10 +67,11 @@ def load_data():
         gamer_advantage_lines,
         gamer_advantage_avg,
         missed_market_share_chart,
-        missed_reorged_chart
+        missed_reorged_chart,
+        missed_mevboost_chart
     )
 
-missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes, gamer_bars, missed_slot_bars, gamer_advantage_lines, gamer_advantage_avg, missed_market_share_chart, missed_reorged_chart = load_data()
+missed_slot_over_time_charts, time_in_slot_scatter_charts, original_marker_sizes, gamer_bars, missed_slot_bars, gamer_advantage_lines, gamer_advantage_avg, missed_market_share_chart, missed_reorged_chart, missed_mevboost_chart = load_data()
 
 reduced_size_markers = {}
 for i, j in original_marker_sizes.items():
@@ -237,6 +240,9 @@ app.layout = html.Div([
                             dbc.Row([ 
                                 dbc.Col(dcc.Graph(id='chart6', figure=missed_reorged_chart), xs=12, className="mb-4"),
                             ]),
+                            dbc.Row([ 
+                                dbc.Col(dcc.Graph(id='chart7', figure=missed_mevboost_chart), xs=12, className="mb-4"),
+                            ]),
                             dbc.Row([
                                 dbc.Col(dcc.Graph(id='chart1', figure=gamer_bars), xs=12, md=6, className="mb-4"),
                                 dbc.Col(dcc.Graph(id='chart2', figure=missed_slot_bars), xs=12, md=6, className="mb-4"),
@@ -309,6 +315,7 @@ app.layout = html.Div([
      Output('chart4', 'figure'),
      Output('chart5', 'figure'),
      Output('chart6', 'figure'),
+     Output('chart7', 'figure'),
      Output('chart1', 'figure'),
      Output('chart2', 'figure')],
     [Input('window-size-store', 'data')]
@@ -321,12 +328,34 @@ def update_layouts(size_data):
     updated_chart3 = update_figure_layout(gamer_advantage_lines, width, entity='chart3', height=350)
     updated_chart4 = update_figure_layout(gamer_advantage_avg, width, entity='chart4', height=350)
     updated_chart5 = update_figure_layout(missed_market_share_chart, width, entity='chart5', height=450)
-    updated_chart6 = update_figure_layout(missed_reorg_chart, width, entity='chart6', height=450)
+    updated_chart6 = update_figure_layout(missed_reorged_chart, width, entity='chart6', height=450)
+    updated_chart7 = update_figure_layout(missed_mevboost_chart, width, entity='chart7', height=450)
+    if width <= 800:
+        updated_chart7.update_layout(
+            legend=dict(y = 1.1, x=0.65, font=dict(family="Ubuntu Mono", size=9))
+        )
+        updated_chart6.update_layout(
+            legend=dict(y = 1.1, x=0.65, font=dict(family="Ubuntu Mono", size=9))
+        )
+        updated_chart5.update_layout(
+            legend=dict(y = 1.1, x=0.75, font=dict(family="Ubuntu Mono", size=9))
+        )
+    else:
+        updated_chart7.update_layout(
+            legend=dict(x=0.82-0.05, y=1.3, font=dict(family="Ubuntu Mono", size=14))
+        )
+        updated_chart6.update_layout(
+            legend=dict(x=0.82-0.03, y=1.3, font=dict(family="Ubuntu Mono", size=14))
+        )
+        updated_chart5.update_layout(
+            legend=dict(x=0.82, y=1.3, font=dict(family="Ubuntu Mono", size=14))
+        )
+        
     updated_chart1 = update_figure_layout(gamer_bars, width, entity='chart1',height=550)
     updated_chart2 = update_figure_layout(missed_slot_bars, width, entity='chart2',height=550)
 
     # Return the updated chart layouts
-    return updated_chart3, updated_chart4, updated_chart5, updated_chart6, updated_chart1, updated_chart2
+    return updated_chart3, updated_chart4, updated_chart5, updated_chart6, updated_chart7, updated_chart1, updated_chart2
 
 
 @app.callback(

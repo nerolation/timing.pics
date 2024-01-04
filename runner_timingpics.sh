@@ -14,6 +14,7 @@ cp ../gamer_advantage_lines.pkl ./
 cp ../gamer_advantage_avg.pkl ./
 cp ../missed_market_share_chart.pkl ./
 cp ../missed_reorged_chart.pkl ./
+cp ../missed_mevboost_chart.pkl ./
     
     
 cp -r ../assets/ ./
@@ -30,7 +31,8 @@ git add missed_slot_bars.pkl
 git add gamer_advantage_lines.pkl 
 git add gamer_advantage_avg.pkl 
 git add missed_market_share_chart.pkl 
-git add missed_reorged_chart.pkl 
+git add missed_reorged_chart.pkl
+git add missed_mevboost_chart.pkl 
 git add assets/
 git add requirements.txt 
 git add Procfile 
