@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/ethereum/timing_games
+cd ~/ethereum/timing_games_building
 ./bin/python3 run_ethdata_pipeline.py
 ./bin/python3 build.py
 
