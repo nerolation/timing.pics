@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ~/ethereum/timing_games_building
-#python3 run_ethdata_pipeline.py
+python3 run_ethdata_pipeline.py
 python3 build.py
 
 cd ./timing.pics
